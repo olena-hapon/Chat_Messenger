@@ -1,0 +1,15 @@
+.dashboardLayout {
+  display: flex;
+  padding-top: 20px;
+  height: 100%;
+
+  .menu {
+    flex: 2;
+    border-right: 1px solid rgb(203, 199, 199);
+  }
+
+  .content {
+    flex: 3;
+    background-color:rgb(242, 238, 238);
+  }
+}

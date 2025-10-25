@@ -1,0 +1,20 @@
+.toogleWrap {
+  padding: 20px;
+  display: flex;
+  width: fit-content;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toogleBtn {
+  background-color: #5390d1;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.toogleBtn:hover {
+  background-color: #0056b3;
+}

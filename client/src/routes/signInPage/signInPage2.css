@@ -1,0 +1,41 @@
+/* Загальний фон сторінки */
+.signin-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #6e8efb, #a777e3);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Карточка входу */
+.signin-card {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 15px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 320px;
+  text-align: center;
+}
+
+/* Заголовок */
+.signin-title {
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+/* Підзаголовок */
+.signin-subtitle {
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+/* Кнопка GoogleLogin буде від Google, тому додатково можна відступ додати */
+.signin-card .google-button {
+  margin-top: 10px;
+}
