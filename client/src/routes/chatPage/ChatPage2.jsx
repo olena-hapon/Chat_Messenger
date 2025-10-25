@@ -6,7 +6,7 @@ import './chatPage2.css';
 
 const fetchChatMessages = async (chatId, token) => {
   const API_URL = import.meta.env.VITE_API_URL;
-  const response = await fetch(`${API_URL}/${chatId}`, {
+  const response = await fetch(`${API_URL}/api/chats/${chatId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
