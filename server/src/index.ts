@@ -23,7 +23,7 @@ app.use(cors({
     "http://localhost:4173",
     "http://localhost:5174",
     "https://chat-messenger-yiim.onrender.com",
-    "https://chat-messenger-seven.vercel.app/sign-in"
+    "https://chat-messenger-seven.vercel.app"
   ],
   credentials: true,
   allowedHeaders: ["Authorization", "Content-Type"],
@@ -39,7 +39,7 @@ const io = new Server(server, {
       "http://localhost:4173",
       "http://localhost:5174",
       "https://chat-messenger-yiim.onrender.com",
-      "hhttps://chat-messenger-seven.vercel.app/sign-in"
+      "hhttps://chat-messenger-seven.vercel.app"
     ],
     credentials: true,
     allowedHeaders: ["Authorization", "Content-Type"],
