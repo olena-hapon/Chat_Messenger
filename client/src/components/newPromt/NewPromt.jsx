@@ -16,7 +16,7 @@ const NewPromt = ({ onSend, messages }) => {
 
     setIsSending(true);
     try {
-      await fetch(`${API_URL}/${chatId}/messages`, {
+      await fetch(`${API_URL}/api/chats/${chatId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
