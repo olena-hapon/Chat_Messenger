@@ -18,13 +18,12 @@ const ChatList = () => {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const token = localStorage.getItem("googleToken");
-  console.log(token)
 
   const { data } = useQuery({
     queryKey: ["chats", token],
     queryFn: async () => {
       if (!token) return [];
-      const response = await fetch(`${API_URL}/api/chats`, {
+      const res = await fetch(`${API_URL}/api/chats`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -32,11 +31,8 @@ const ChatList = () => {
         },
         credentials: "include",
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch chats");
-      }
-      return await response.json();
+      if (!res.ok) throw new Error("Failed to fetch chats");
+      return res.json();
     },
     staleTime: 0,
     refetchOnWindowFocus: true,
@@ -55,12 +51,8 @@ const ChatList = () => {
   const filteredChats =
     data?.filter(
       (chat) =>
-        chat.participant.firstName
-          .toLowerCase()
-          .startsWith(searchQuery.toLowerCase()) ||
-        chat.participant.lastName
-          .toLowerCase()
-          .startsWith(searchQuery.toLowerCase())
+        chat.participant.firstName.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
+        chat.participant.lastName.toLowerCase().startsWith(searchQuery.toLowerCase())
     ) || [];
 
   const handleCreateChat = async (newChat) => {
@@ -75,16 +67,10 @@ const ChatList = () => {
         },
         body: JSON.stringify(newChat),
       });
-
       if (!res.ok) throw new Error("Failed to create chat");
-      const createChat = await res.json();
-
-      queryClient.setQueryData(["chats", token], (oldChats = []) => [
-        ...oldChats,
-        createChat,
-      ]);
-      navigate(`/dashboard/chats/${createChat._id}`);
-
+      const createdChat = await res.json();
+      queryClient.setQueryData(["chats", token], (oldChats = []) => [...oldChats, createdChat]);
+      navigate(`/dashboard/chats/${createdChat._id}`);
       setIsModalOpen(false);
     } catch (err) {
       console.log("Error creating chat:", err);
@@ -94,17 +80,15 @@ const ChatList = () => {
   const handleDeleteChat = async (chatId) => {
     if (!token) return;
     try {
-      const res = await fetch(`${API_URL}/${chatId}`, {
+      const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-
       if (!res.ok) throw new Error("Failed to delete chat");
       queryClient.invalidateQueries({ queryKey: ["chats", token] });
-
       setChatToDelete(null);
     } catch (err) {
       console.log("Error deleting chat", err);
@@ -114,27 +98,22 @@ const ChatList = () => {
   const handleEditSave = async () => {
     if (!chatToEdit || !token) return;
     try {
-      const response = await fetch(
-        `${API_URL}/${chatToEdit._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            firstName: chatToEdit.participant.firstName,
-            lastName: chatToEdit.participant.lastName,
-          }),
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to update chat");
+      const res = await fetch(`${API_URL}/api/chats/${chatToEdit._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          firstName: chatToEdit.participant.firstName,
+          lastName: chatToEdit.participant.lastName,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update chat");
       queryClient.invalidateQueries({ queryKey: ["chats", token] });
-
       setChatToEdit(null);
-    } catch (error) {
-      console.log("Error updating chat:", error);
+    } catch (err) {
+      console.log("Error updating chat", err);
     }
   };
 
@@ -155,7 +134,6 @@ const ChatList = () => {
         <div className="chatForm_search">
           <img src="/search.png" alt="" />
           <input
-            className="chatForm_input"
             type="text"
             placeholder="Search or start new chat"
             value={searchQuery}
@@ -181,20 +159,14 @@ const ChatList = () => {
           }).format(new Date(chat.createdAt));
 
           return (
-            <Link
-              className="listItem"
-              key={chat._id}
-              to={`/dashboard/chats/${chat._id}`}
-            >
+            <Link key={chat._id} className="listItem" to={`/dashboard/chats/${chat._id}`}>
               <div className="userInfo">
                 <div className="userData">
                   <span>{chat.participant.firstName}</span>
                   <span>{chat.participant.lastName}</span>
                 </div>
                 <div className="userTitle">
-                  {lastMessage?.text
-                    ? lastMessage.text.split(" ").slice(0, 5).join(" ") + " ..."
-                    : ""}
+                  {lastMessage?.text ? lastMessage.text.split(" ").slice(0, 5).join(" ") + " ..." : ""}
                 </div>
               </div>
 
@@ -202,9 +174,7 @@ const ChatList = () => {
                 <div>{formattedDate}</div>
                 <div
                   className="hidden"
-                  onClick={() =>
-                    setActiveMenu(activeMenu === chat._id ? null : chat._id)
-                  }
+                  onClick={() => setActiveMenu(activeMenu === chat._id ? null : chat._id)}
                 >
                   +
                 </div>
@@ -212,22 +182,8 @@ const ChatList = () => {
 
               {activeMenu === chat._id && (
                 <div className="activeMenu" ref={menuRef}>
-                  <div
-                    onClick={() => {
-                      setChatToEdit(chat);
-                      setActiveMenu(null);
-                    }}
-                  >
-                    edit user
-                  </div>
-                  <div
-                    onClick={() => {
-                      setChatToDelete(chat._id);
-                      setActiveMenu(null);
-                    }}
-                  >
-                    remove
-                  </div>
+                  <div onClick={() => { setChatToEdit(chat); setActiveMenu(null); }}>edit user</div>
+                  <div onClick={() => { setChatToDelete(chat._id); setActiveMenu(null); }}>remove</div>
                 </div>
               )}
             </Link>
@@ -235,10 +191,7 @@ const ChatList = () => {
         })}
       </div>
 
-      {isModalOpen && (
-        <CreateChatModal onClose={closeDeleteModal} onSave={handleCreateChat} />
-      )}
-
+      {isModalOpen && <CreateChatModal onClose={closeDeleteModal} onSave={handleCreateChat} />}
       {chatToDelete && (
         <div className="modalOverlay">
           <div className="modalChat">
@@ -248,7 +201,6 @@ const ChatList = () => {
           </div>
         </div>
       )}
-
       {chatToEdit && (
         <div className="modalOverlay">
           <div className="modalChat">
@@ -258,10 +210,7 @@ const ChatList = () => {
               onChange={(e) =>
                 setChatToEdit({
                   ...chatToEdit,
-                  participant: {
-                    ...chatToEdit.participant,
-                    firstName: e.target.value,
-                  },
+                  participant: { ...chatToEdit.participant, firstName: e.target.value },
                 })
               }
             />
@@ -270,10 +219,7 @@ const ChatList = () => {
               onChange={(e) =>
                 setChatToEdit({
                   ...chatToEdit,
-                  participant: {
-                    ...chatToEdit.participant,
-                    lastName: e.target.value,
-                  },
+                  participant: { ...chatToEdit.participant, lastName: e.target.value },
                 })
               }
             />
@@ -287,6 +233,3 @@ const ChatList = () => {
 };
 
 export default ChatList;
-
-
-

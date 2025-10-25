@@ -39,7 +39,7 @@ const io = new Server(server, {
       "http://localhost:4173",
       "http://localhost:5174",
       "https://chat-messenger-yiim.onrender.com",
-      "hhttps://chat-messenger-seven.vercel.app"
+      "https://chat-messenger-seven.vercel.app"
     ],
     credentials: true,
     allowedHeaders: ["Authorization", "Content-Type"],
