@@ -134,6 +134,7 @@ const ChatList = () => {
         <div className="chatForm_search">
           <img src="/search.png" alt="" />
           <input
+            className="chatForm_input"
             type="text"
             placeholder="Search or start new chat"
             value={searchQuery}
