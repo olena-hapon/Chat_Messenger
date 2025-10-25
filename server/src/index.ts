@@ -22,9 +22,8 @@ app.use(cors({
     "http://localhost:5173",
     "http://localhost:4173",
     "http://localhost:5174",
-    "https://chat-app-1j3i.onrender.com",
-    "https://chat-app-mu-smoky.vercel.app",
-    "https://balanced-pegasus-55.clerk.accounts.dev"
+    "https://chat-messenger-yiim.onrender.com",
+    "https://chat-app-mu-smoky.vercel.app"
   ],
   credentials: true,
   allowedHeaders: ["Authorization", "Content-Type"],
@@ -39,7 +38,7 @@ const io = new Server(server, {
       "http://localhost:5173",
       "http://localhost:4173",
       "http://localhost:5174",
-      "https://chat-app-1j3i.onrender.com",
+      "https://chat-messenger-yiim.onrender.com",
       "https://chat-app-mu-smoky.vercel.app"
     ],
     credentials: true,

@@ -8,6 +8,7 @@ const NewPromt = ({ onSend, messages }) => {
   const { id: chatId } = useParams();
   const endRef = useRef(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem('googleToken');
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +16,7 @@ const NewPromt = ({ onSend, messages }) => {
 
     setIsSending(true);
     try {
-      await fetch(`http://localhost:3000/api/chats/${chatId}/messages`, {
+      await fetch(`${API_URL}/${chatId}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -5,7 +5,8 @@ import NewPromt from '../../components/newPromt/NewPromt';
 import './chatPage2.css';
 
 const fetchChatMessages = async (chatId, token) => {
-  const response = await fetch(`http://localhost:3000/api/chats/${chatId}`, {
+  const API_URL = import.meta.env.VITE_API_URL;
+  const response = await fetch(`${API_URL}/${chatId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',

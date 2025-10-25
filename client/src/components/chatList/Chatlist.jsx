@@ -15,6 +15,7 @@ const ChatList = () => {
   const menuRef = useRef(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const token = localStorage.getItem("googleToken");
   console.log(token)
@@ -23,7 +24,7 @@ const ChatList = () => {
     queryKey: ["chats", token],
     queryFn: async () => {
       if (!token) return [];
-      const response = await fetch("http://localhost:3000/api/chats", {
+      const response = await fetch(`${API_URL}/api/chats`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -66,7 +67,7 @@ const ChatList = () => {
     if (!token) return;
     setSearchQuery("");
     try {
-      const res = await fetch("http://localhost:3000/api/chats", {
+      const res = await fetch(`${API_URL}/api/chats`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -93,7 +94,7 @@ const ChatList = () => {
   const handleDeleteChat = async (chatId) => {
     if (!token) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/chats/${chatId}`, {
+      const res = await fetch(`${API_URL}/${chatId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -114,7 +115,7 @@ const ChatList = () => {
     if (!chatToEdit || !token) return;
     try {
       const response = await fetch(
-        `http://localhost:3000/api/chats/${chatToEdit._id}`,
+        `${API_URL}/${chatToEdit._id}`,
         {
           method: "PUT",
           headers: {
