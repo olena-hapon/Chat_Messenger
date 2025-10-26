@@ -12,13 +12,13 @@ This is the frontend of the chat application that communicates with the backend 
 - **Auto-Response with Quote**: The backend sends an auto-response using random quotes from the Zenquotes.io.
 - **Toast Notification**: Toast notifications are displayed when a new message is received.
 - **Search Chats**: Users can search through existing chats.
-- **Login with Gmail**: Users can log in using Gmail authentication.
+- **Login with Gmail**: Login using your Google account via OAuth.
 - **Live Socket Connection**: Allows automatic sending of messages to a random chat and displays notifications for those messages.
 
 ## Technologies Used
 
 - **Frontend**: React (JS), HTML, CSS, Axios
-- **Authentication**: Clerk for login with Gmail
+- **Authentication**: Google OAuth (via @react-oauth/google)
 - **Backend Communication**: React Query for making API requests to the backend
 - **Socket Connection**: Socket.IO for live communication with the backend
 
@@ -32,6 +32,7 @@ This is the frontend of the chat application that communicates with the backend 
 
    Live Demo
 Link to the deployed frontend
+https://chat-messenger-yourname.vercel.app
 
 How it Works
 On the main page, you can view predefined chats, or create a new one by providing first and last names.

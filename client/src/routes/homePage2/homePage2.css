@@ -20,14 +20,15 @@
   text-align: center;
 
   h1 {
-    font-size: 78px;
+    font-size: 68px;
     background: linear-gradient(to right, #217bfe, #e55571);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
+    line-height: 1.7;
 
     @media screen and (max-width: 1280px) {
-      font-size: 64px;
+      font-size: 54px;
     }
   }
   h3 {

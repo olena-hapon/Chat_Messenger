@@ -22,7 +22,7 @@ const HomePage2 = () => {
   return (
     <div className='homepage'>
       <div className="left">
-        <h1>Chat App</h1>
+        <h1>Chat Messenger</h1>
         <h2>Start chatting</h2>
         <h3>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Repudiandae
