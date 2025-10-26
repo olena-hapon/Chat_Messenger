@@ -38,9 +38,8 @@ The frontend is built with **React**, using **custom HTML/CSS** (no UI libraries
 ---
 
 ## Live Demo
-
-🔗 **Frontend:** [https://chat-messenger-yourname.vercel.app](https://chat-messenger-yourname.vercel.app)  
-🔗 **Backend:** [https://chat-messenger-yourname.onrender.com](https://chat-messenger-yourname.onrender.com)
+🔗 **Frontend:** [https://chat-messenger-seven.vercel.app](https://chat-messenger-seven.vercel.app)  
+🔗 **Backend:** [https://chat-messenger-yiim.onrender.com](https://chat-messenger-yiim.onrender.com)
 
 ---
 
