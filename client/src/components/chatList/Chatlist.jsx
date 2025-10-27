@@ -31,6 +31,13 @@ const ChatList = () => {
         },
         credentials: "include",
       });
+
+      if (res.status === 401) {
+        localStorage.clear();
+        navigate("/sign-in");
+        return [];
+      }
+
       if (!res.ok) throw new Error("Failed to fetch chats");
       return res.json();
     },
@@ -51,8 +58,12 @@ const ChatList = () => {
   const filteredChats =
     data?.filter(
       (chat) =>
-        chat.participant.firstName.toLowerCase().startsWith(searchQuery.toLowerCase()) ||
-        chat.participant.lastName.toLowerCase().startsWith(searchQuery.toLowerCase())
+        chat.participant.firstName
+          .toLowerCase()
+          .startsWith(searchQuery.toLowerCase()) ||
+        chat.participant.lastName
+          .toLowerCase()
+          .startsWith(searchQuery.toLowerCase())
     ) || [];
 
   const handleCreateChat = async (newChat) => {
@@ -69,7 +80,10 @@ const ChatList = () => {
       });
       if (!res.ok) throw new Error("Failed to create chat");
       const createdChat = await res.json();
-      queryClient.setQueryData(["chats", token], (oldChats = []) => [...oldChats, createdChat]);
+      queryClient.setQueryData(["chats", token], (oldChats = []) => [
+        ...oldChats,
+        createdChat,
+      ]);
       navigate(`/dashboard/chats/${createdChat._id}`);
       setIsModalOpen(false);
     } catch (err) {
@@ -160,14 +174,20 @@ const ChatList = () => {
           }).format(new Date(chat.createdAt));
 
           return (
-            <Link key={chat._id} className="listItem" to={`/dashboard/chats/${chat._id}`}>
+            <Link
+              key={chat._id}
+              className="listItem"
+              to={`/dashboard/chats/${chat._id}`}
+            >
               <div className="userInfo">
                 <div className="userData">
                   <span>{chat.participant.firstName}</span>
                   <span>{chat.participant.lastName}</span>
                 </div>
                 <div className="userTitle">
-                  {lastMessage?.text ? lastMessage.text.split(" ").slice(0, 5).join(" ") + " ..." : ""}
+                  {lastMessage?.text
+                    ? lastMessage.text.split(" ").slice(0, 5).join(" ") + " ..."
+                    : ""}
                 </div>
               </div>
 
@@ -175,7 +195,9 @@ const ChatList = () => {
                 <div>{formattedDate}</div>
                 <div
                   className="hidden"
-                  onClick={() => setActiveMenu(activeMenu === chat._id ? null : chat._id)}
+                  onClick={() =>
+                    setActiveMenu(activeMenu === chat._id ? null : chat._id)
+                  }
                 >
                   +
                 </div>
@@ -183,8 +205,22 @@ const ChatList = () => {
 
               {activeMenu === chat._id && (
                 <div className="activeMenu" ref={menuRef}>
-                  <div onClick={() => { setChatToEdit(chat); setActiveMenu(null); }}>edit user</div>
-                  <div onClick={() => { setChatToDelete(chat._id); setActiveMenu(null); }}>remove</div>
+                  <div
+                    onClick={() => {
+                      setChatToEdit(chat);
+                      setActiveMenu(null);
+                    }}
+                  >
+                    edit user
+                  </div>
+                  <div
+                    onClick={() => {
+                      setChatToDelete(chat._id);
+                      setActiveMenu(null);
+                    }}
+                  >
+                    remove
+                  </div>
                 </div>
               )}
             </Link>
@@ -192,7 +228,9 @@ const ChatList = () => {
         })}
       </div>
 
-      {isModalOpen && <CreateChatModal onClose={closeDeleteModal} onSave={handleCreateChat} />}
+      {isModalOpen && (
+        <CreateChatModal onClose={closeDeleteModal} onSave={handleCreateChat} />
+      )}
       {chatToDelete && (
         <div className="modalOverlay">
           <div className="modalChat">
@@ -211,7 +249,10 @@ const ChatList = () => {
               onChange={(e) =>
                 setChatToEdit({
                   ...chatToEdit,
-                  participant: { ...chatToEdit.participant, firstName: e.target.value },
+                  participant: {
+                    ...chatToEdit.participant,
+                    firstName: e.target.value,
+                  },
                 })
               }
             />
@@ -220,7 +261,10 @@ const ChatList = () => {
               onChange={(e) =>
                 setChatToEdit({
                   ...chatToEdit,
-                  participant: { ...chatToEdit.participant, lastName: e.target.value },
+                  participant: {
+                    ...chatToEdit.participant,
+                    lastName: e.target.value,
+                  },
                 })
               }
             />
