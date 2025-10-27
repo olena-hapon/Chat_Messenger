@@ -4,7 +4,7 @@ const DashboardPage = () => {
 
   return (
     <div className="dashboardPage">
-      <h1>Chat App</h1>
+      <h1>Chat Messenger</h1>
       <div className='imageContainer'>
         <img src="/peopleChat.jpg" alt="" />
       </div>

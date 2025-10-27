@@ -19,6 +19,12 @@ const ChatList = () => {
 
   const token = localStorage.getItem("googleToken");
 
+    useEffect(() => {
+    if (!token) {
+      navigate("/sign-in");
+    }
+  }, [token, navigate]);
+
   const { data } = useQuery({
     queryKey: ["chats", token],
     queryFn: async () => {
