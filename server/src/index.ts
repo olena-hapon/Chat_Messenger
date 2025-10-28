@@ -32,7 +32,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }));
 
-app.options("*", cors({
+app.options("/*", cors({
   origin: allowedOrigins,
   credentials: true,
   allowedHeaders: ["Authorization", "Content-Type"],
