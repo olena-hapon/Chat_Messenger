@@ -1,4 +1,4 @@
-// SignIn.tsx
+// SignIn.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
@@ -6,7 +6,7 @@ import { GoogleLogin } from "@react-oauth/google";
 const SignIn = () => {
   const navigate = useNavigate();
 
-  const handleLoginSuccess = (credentialResponse: any) => {
+  const handleLoginSuccess = (credentialResponse) => {
     if (!credentialResponse.credential) return;
 
     // Зберігаємо токен у localStorage
