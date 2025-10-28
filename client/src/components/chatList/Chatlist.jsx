@@ -19,7 +19,7 @@ const ChatList = () => {
 
   const token = localStorage.getItem("googleToken");
 
-    useEffect(() => {
+  useEffect(() => {
     if (!token) {
       navigate("/sign-in");
     }

@@ -1,6 +1,6 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import  { jwtDecode } from "jwt-decode";
 import "./signInPage2.css";
 
 const SignInPage2 = () => {

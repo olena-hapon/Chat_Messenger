@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import ChatList from "../ChatList/Chatlist";
 import LogoutBtn from "../../components/logoutBtn/LogoutBtn";
 
@@ -53,4 +53,3 @@ const DashboardLayout = () => {
 };
 
 export default DashboardLayout;
-
