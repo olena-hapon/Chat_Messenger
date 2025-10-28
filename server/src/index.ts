@@ -17,14 +17,23 @@ const MONGO_URI = process.env.MONGODB_URI || "";
 const app = express();
 const server = http.createServer(app);
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:4173",
+  "http://localhost:5174",
+  "https://chat-messenger-yiim.onrender.com",
+  "https://chat-messenger-seven.vercel.app"
+];
+
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "http://localhost:4173",
-    "http://localhost:5174",
-    "https://chat-messenger-yiim.onrender.com",
-    "https://chat-messenger-seven.vercel.app"
-  ],
+  origin: allowedOrigins,
+  credentials: true,
+  allowedHeaders: ["Authorization", "Content-Type"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+}));
+
+app.options("*", cors({
+  origin: allowedOrigins,
   credentials: true,
   allowedHeaders: ["Authorization", "Content-Type"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
@@ -34,13 +43,7 @@ app.use(express.json());
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-      "http://localhost:5174",
-      "https://chat-messenger-yiim.onrender.com",
-      "https://chat-messenger-seven.vercel.app"
-    ],
+    origin: allowedOrigins,
     credentials: true,
     allowedHeaders: ["Authorization", "Content-Type"],
   }
@@ -53,7 +56,7 @@ io.on("connection", (socket) => {
   });
 });
 
-
+// --------- Mongo connection ---------
 const connect = async () => {
   try {
     await mongoose.connect(MONGO_URI);
@@ -63,21 +66,22 @@ const connect = async () => {
   }
 };
 
-
 server.listen(PORT, () => {
   connect();
   console.log(`Server is running on port ${PORT}`);
 });
 
-
+// --------- Routes ---------
 app.get("/", (req, res) => {
   res.status(200).send("Server is running.");
 });
 
+// Google Auth route
 app.post("/auth/google", googleAuth, (req: any, res) => {
   res.json({ email: req.userEmail, name: req.userName });
 });
 
+// Auto-send message
 app.post("/api/auto-send", async (req: Request, res: Response) => {
   try {
     const chats: ChatDocument[] = await Chat.find().exec();
@@ -118,7 +122,7 @@ app.post("/api/auto-send", async (req: Request, res: Response) => {
   }
 });
 
-
+// Get all chats
 app.get("/api/chats", googleAuth, async (req: any, res: Response) => {
   try {
     const userEmail = req.userEmail;
@@ -132,6 +136,7 @@ app.get("/api/chats", googleAuth, async (req: any, res: Response) => {
   }
 });
 
+// Get single chat
 app.get("/api/chats/:id", googleAuth, async (req: any, res: Response) => {
   try {
     const userEmail = req.userEmail;
@@ -146,6 +151,7 @@ app.get("/api/chats/:id", googleAuth, async (req: any, res: Response) => {
   }
 });
 
+// Create chat
 app.post("/api/chats", googleAuth, async (req: any, res: Response) => {
   try {
     const userEmail = req.userEmail;
@@ -177,6 +183,7 @@ app.post("/api/chats", googleAuth, async (req: any, res: Response) => {
   }
 });
 
+// Send message
 app.post("/api/chats/:chatId/messages", googleAuth, async (req: any, res: Response) => {
   try {
     const { chatId } = req.params;
@@ -216,6 +223,7 @@ app.post("/api/chats/:chatId/messages", googleAuth, async (req: any, res: Respon
   }
 });
 
+// Update chat
 app.put("/api/chats/:id", googleAuth, async (req: any, res: Response) => {
   try {
     const { id } = req.params;
@@ -236,6 +244,7 @@ app.put("/api/chats/:id", googleAuth, async (req: any, res: Response) => {
   }
 });
 
+// Delete chat
 app.delete("/api/chats/:id", googleAuth, async (req: any, res: Response) => {
   try {
     const { id } = req.params;
@@ -251,5 +260,3 @@ app.delete("/api/chats/:id", googleAuth, async (req: any, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 });
-
-
