@@ -25,7 +25,6 @@ const SignIn = () => {
   return (
     <div className="signin-page">
       <div className="signin-card">
-        <h2 className="signin-title">Sign in to Chat App</h2>
         <h2 className="signin-title">Sign in to Chat Messenger</h2>
         <p className="signin-subtitle">Use your Google account to continue</p>
         <GoogleLogin
