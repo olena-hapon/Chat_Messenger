@@ -1,6 +1,7 @@
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import './signInPage2.css';
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -10,7 +11,6 @@ const SignIn = () => {
 
     const decoded = jwtDecode(credentialResponse.credential);
 
-    // Зберігаємо дані користувача
     localStorage.setItem("googleToken", credentialResponse.credential);
     localStorage.setItem("userEmail", decoded.email);
     localStorage.setItem("userName", decoded.name);
