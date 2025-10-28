@@ -1,7 +1,6 @@
-// SignIn.jsx
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
+import jwtDecode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -9,10 +8,13 @@ const SignIn = () => {
   const handleLoginSuccess = (credentialResponse) => {
     if (!credentialResponse.credential) return;
 
-    // Зберігаємо токен у localStorage
-    localStorage.setItem("googleToken", credentialResponse.credential);
+    const decoded = jwtDecode(credentialResponse.credential);
 
-    // Переходимо на дашборд
+    // Зберігаємо дані користувача
+    localStorage.setItem("googleToken", credentialResponse.credential);
+    localStorage.setItem("userEmail", decoded.email);
+    localStorage.setItem("userName", decoded.name);
+
     navigate("/dashboard");
   };
 
@@ -21,12 +23,16 @@ const SignIn = () => {
   };
 
   return (
-    <div className="signInPage">
-      <h1>Sign in with Google</h1>
-      <GoogleLogin
-        onSuccess={handleLoginSuccess}
-        onError={handleLoginError}
-      />
+    <div className="signin-page">
+      <div className="signin-card">
+        <h2 className="signin-title">Sign in to Chat App</h2>
+        <h2 className="signin-title">Sign in to Chat Messenger</h2>
+        <p className="signin-subtitle">Use your Google account to continue</p>
+        <GoogleLogin
+          onSuccess={handleLoginSuccess}
+          onError={handleLoginError}
+        />
+      </div>
     </div>
   );
 };
