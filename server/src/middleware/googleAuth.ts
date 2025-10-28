@@ -30,9 +30,11 @@ export const googleAuth = async (req: AuthRequest, res: Response, next: NextFunc
       return res.status(401).json({ message: 'Invalid token' });
     }
 
+    // Знаходимо користувача по email
     let user = await User.findOne({ email: payload.email });
+
+    // Якщо користувач новий – створюємо його
     if (!user) {
-      // Створюємо користувача
       user = new User({
         email: payload.email,
         name: payload.name || '',
@@ -65,12 +67,13 @@ export const googleAuth = async (req: AuthRequest, res: Response, next: NextFunc
       }
     }
 
+    // Прив'язуємо email та name користувача до req
     req.userEmail = user.email;
     req.userName = user.name;
 
     next();
   } catch (err) {
-    console.error(err);
-    res.status(401).json({ message: 'Invalid token' });
+    console.error("Google Auth error:", err);
+    res.status(401).json({ message: 'Invalid or expired token' });
   }
 };

@@ -1,45 +1,34 @@
-import { GoogleLogin } from "@react-oauth/google";
+// SignIn.tsx
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import  { jwtDecode } from "jwt-decode";
-import "./signInPage2.css";
+import { GoogleLogin } from "@react-oauth/google";
 
-const SignInPage2 = () => {
+const SignIn = () => {
   const navigate = useNavigate();
 
-  const handleLoginSuccess = (credentialResponse) => {
+  const handleLoginSuccess = (credentialResponse: any) => {
     if (!credentialResponse.credential) return;
 
-    try {
-      const decoded = jwtDecode(credentialResponse.credential);
+    // Зберігаємо токен у localStorage
+    localStorage.setItem("googleToken", credentialResponse.credential);
 
-      const currentTime = Math.floor(Date.now() / 1000);
-      if (decoded.exp && decoded.exp < currentTime) {
-        alert("Token has expired. Please login again.");
-        return;
-      }
+    // Переходимо на дашборд
+    navigate("/dashboard");
+  };
 
-      localStorage.setItem("googleToken", credentialResponse.credential);
-      localStorage.setItem("userEmail", decoded.email);
-      localStorage.setItem("userName", decoded.name);
-      navigate("/dashboard");
-    } catch (err) {
-      console.error("Error decoding token:", err);
-      alert("Failed to decode token");
-    }
+  const handleLoginError = () => {
+    console.log("Login Failed");
   };
 
   return (
-    <div className="signin-page">
-      <div className="signin-card">
-        <h2 className="signin-title">Sign in to Chat Messenger</h2>
-        <p className="signin-subtitle">Use your Google account to continue</p>
-        <GoogleLogin
-          onSuccess={handleLoginSuccess}
-          onError={() => alert("Login Failed")}
-        />
-      </div>
+    <div className="signInPage">
+      <h1>Sign in with Google</h1>
+      <GoogleLogin
+        onSuccess={handleLoginSuccess}
+        onError={handleLoginError}
+      />
     </div>
   );
 };
 
-export default SignInPage2;
+export default SignIn;

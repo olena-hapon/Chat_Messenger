@@ -19,13 +19,15 @@ const ChatList = () => {
 
   const token = localStorage.getItem("googleToken");
 
+  // --- Перевірка токена та редирект ---
   useEffect(() => {
     if (!token) {
       navigate("/sign-in");
     }
   }, [token, navigate]);
 
-  const { data } = useQuery({
+  // --- Fetch chats ---
+  const { data: chats } = useQuery({
     queryKey: ["chats", token],
     queryFn: async () => {
       if (!token) return [];
@@ -35,11 +37,10 @@ const ChatList = () => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        credentials: "include",
       });
 
       if (res.status === 401) {
-        localStorage.clear();
+        localStorage.removeItem("googleToken");
         navigate("/sign-in");
         return [];
       }
@@ -47,10 +48,12 @@ const ChatList = () => {
       if (!res.ok) throw new Error("Failed to fetch chats");
       return res.json();
     },
+    enabled: !!token,
     staleTime: 0,
     refetchOnWindowFocus: true,
   });
 
+  // --- Закриття активного меню при кліку поза ним ---
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
@@ -61,26 +64,27 @@ const ChatList = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // --- Фільтрація чатів ---
   const filteredChats =
-    data?.filter(
+    chats?.filter(
       (chat) =>
         chat.participant.firstName
           .toLowerCase()
-          .startsWith(searchQuery.toLowerCase()) ||
+          .includes(searchQuery.toLowerCase()) ||
         chat.participant.lastName
           .toLowerCase()
-          .startsWith(searchQuery.toLowerCase())
+          .includes(searchQuery.toLowerCase())
     ) || [];
 
+  // --- Створення нового чату ---
   const handleCreateChat = async (newChat) => {
     if (!token) return;
-    setSearchQuery("");
     try {
       const res = await fetch(`${API_URL}/api/chats`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newChat),
       });
@@ -92,37 +96,40 @@ const ChatList = () => {
       ]);
       navigate(`/dashboard/chats/${createdChat._id}`);
       setIsModalOpen(false);
+      setSearchQuery("");
     } catch (err) {
       console.log("Error creating chat:", err);
     }
   };
 
+  // --- Видалення чату ---
   const handleDeleteChat = async (chatId) => {
     if (!token) return;
     try {
       const res = await fetch(`${API_URL}/api/chats/${chatId}`, {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
       if (!res.ok) throw new Error("Failed to delete chat");
-      queryClient.invalidateQueries({ queryKey: ["chats", token] });
+      queryClient.invalidateQueries(["chats", token]);
       setChatToDelete(null);
     } catch (err) {
-      console.log("Error deleting chat", err);
+      console.log("Error deleting chat:", err);
     }
   };
 
+  // --- Редагування чату ---
   const handleEditSave = async () => {
     if (!chatToEdit || !token) return;
     try {
       const res = await fetch(`${API_URL}/api/chats/${chatToEdit._id}`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           firstName: chatToEdit.participant.firstName,
@@ -130,16 +137,16 @@ const ChatList = () => {
         }),
       });
       if (!res.ok) throw new Error("Failed to update chat");
-      queryClient.invalidateQueries({ queryKey: ["chats", token] });
+      queryClient.invalidateQueries(["chats", token]);
       setChatToEdit(null);
     } catch (err) {
-      console.log("Error updating chat", err);
+      console.log("Error updating chat:", err);
     }
   };
 
-  const closeDeleteModal = () => {
+  const closeModal = () => {
     setChatToDelete(null);
-    setSearchQuery("");
+    setChatToEdit(null);
     setIsModalOpen(false);
   };
 
@@ -147,12 +154,12 @@ const ChatList = () => {
     <div className="chatList">
       <div className="chatForm">
         <div className="chatForm_top">
-          <img src="/user.png" alt="" />
+          <img src="/user.png" alt="user" />
           <ToogleBTN />
         </div>
 
         <div className="chatForm_search">
-          <img src="/search.png" alt="" />
+          <img src="/search.png" alt="search" />
           <input
             className="chatForm_input"
             type="text"
@@ -235,17 +242,19 @@ const ChatList = () => {
       </div>
 
       {isModalOpen && (
-        <CreateChatModal onClose={closeDeleteModal} onSave={handleCreateChat} />
+        <CreateChatModal onClose={closeModal} onSave={handleCreateChat} />
       )}
+
       {chatToDelete && (
         <div className="modalOverlay">
           <div className="modalChat">
             <p>Are you sure you want to delete this chat?</p>
             <button onClick={() => handleDeleteChat(chatToDelete)}>Yes</button>
-            <button onClick={closeDeleteModal}>No</button>
+            <button onClick={closeModal}>No</button>
           </div>
         </div>
       )}
+
       {chatToEdit && (
         <div className="modalOverlay">
           <div className="modalChat">
@@ -275,7 +284,7 @@ const ChatList = () => {
               }
             />
             <button onClick={handleEditSave}>Save</button>
-            <button onClick={() => setChatToEdit(null)}>Cancel</button>
+            <button onClick={closeModal}>Cancel</button>
           </div>
         </div>
       )}
